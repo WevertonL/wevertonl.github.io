@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conectar Instância</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        #responseImage {
+            margin-top: 20px;
+            max-width: 100%;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            display: none;
+        }
+        .btn {
+            background-color: #007bff;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h3>Conectar ao WhatsApp</h3>
+        <p>Pressione o botão abaixo para gerar o QR Code e conectar sua instância.</p>
+        <button id="connectButton" class="btn waves-effect waves-light">Gerar QR Code</button>
+        <div id="responseContainer">
+            <img id="responseImage" src="" alt="QR Code da Instância">
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $('#connectButton').click(function () {
+                const baseUrl = 'https://wapi.agencianipix.com'; // Substitua pela URL da sua API
+                const instanceName = 'toogood2'; // Substitua pelo nome da instância
+                const apiKey = '5B948208F4A3-4DB8-B3EB-8F33A096A7BA'; // Substitua pela sua chave da API
+
+                const endpoint = `${baseUrl}/instance/connect/${instanceName}`;
+
+                $.ajax({
+                    url: endpoint,
+                    method: 'GET',
+                    headers: {
+                        'apikey': apiKey
+                    },
+                    success: function (response) {
+                        if (response && response.base64) {
+                            $('#responseImage').attr('src', response.base64).show();
+                            M.toast({ html: 'QR Code gerado com sucesso!', classes: 'green' });
+                        } else {
+                            M.toast({ html: 'Erro: Imagem não encontrada na resposta.', classes: 'red' });
+                        }
+                    },
+                    error: function (jqXHR, textStatus) {
+                        console.error('Erro na chamada da API:', textStatus, jqXHR);
+                        M.toast({ html: 'Erro na chamada da API: ' + textStatus, classes: 'red' });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
